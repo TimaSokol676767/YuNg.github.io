@@ -17,55 +17,6 @@
     margin-bottom: 20px;
     display: block;
 }
-/* =========================================
-   ИКОНКИ КОРЗИНЫ И ИЗБРАННОГО В ШАПКЕ
-   ========================================= */
-.user-interface {
-    display: flex;
-    justify-content: center;
-    gap: 20px; /* Расстояние между сердечком и корзиной */
-    margin-top: 10px;
-    font-size: 14px;
-}
-
-.user-interface div {
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
-.user-interface div:hover {
-    color: #e50010; /* Красный акцент при наведении */
-}
-
-/* =========================================
-   ПАНЕЛЬ ФИЛЬТРОВ (Цвет и Размер)
-   ========================================= */
-.filters {
-    display: flex;
-    gap: 15px; /* Расстояние между селекторами */
-    margin-top: 20px;
-    margin-bottom: 30px;
-    justify-content: flex-end; /* Прижимаем фильтры к правому краю */
-}
-
-.filters select {
-    padding: 10px 15px;
-    border: 1px solid #e0e0e0;
-    background-color: #ffffff;
-    font-family: inherit;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.3s ease;
-    border-radius: 0; /* Строгие прямые углы для минимализма */
-}
-
-/* Эффект при наведении на фильтр */
-.filters select:hover, 
-.filters select:focus {
-    border-color: #000000;
-}
 
 .logo img {
     height: 120px; 
@@ -129,10 +80,6 @@
             <a href="men.html">Мужчины</a>
             <a href="kids.html" class="active">Дети</a>
         </nav>
-        <div class="user-interface">
-        <div id="favorites">Избранное <span id="fav-count">0</span></div>
-        <div id="cart">Корзина <span id="cart-count">0</span></div>
-    </div>
     </header>
 
     <div class="catalog-container">
