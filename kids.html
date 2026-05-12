@@ -68,6 +68,118 @@
         .footer-links { display: flex; gap: 40px; margin-bottom: 40px; text-transform: uppercase; font-weight: bold; }
     </style>
     <script>
+        // --- 1. ЛОГИКА КОРЗИНЫ И ИЗБРАННОГО ---
+const cartCounterEl = document.getElementById('cart-counter');
+const favCounterEl = document.getElementById('fav-counter');
+let cartCount = 0;
+let favCount = 0;
+
+document.querySelectorAll('.add-cart-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        cartCount++;
+        cartCounterEl.innerText = `Корзина (${cartCount})`;
+        alert('Товар добавлен в корзину!');
+    });
+});
+
+document.querySelectorAll('.add-fav-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        if (this.style.color === 'red') {
+            this.style.color = 'black';
+            favCount--;
+        } else {
+            this.style.color = 'red';
+            favCount++;
+        }
+        favCounterEl.innerText = `Избранное (${favCount})`;
+    });
+});
+
+
+// --- 2. ЛОГИКА ФИЛЬТРАЦИИ И СОРТИРОВКИ (Без изменения HTML) ---
+
+// Находим элементы на странице
+const sidebar = document.querySelector('.sidebar');
+const applyBtn = document.querySelector('.apply-btn');
+const catalog = document.querySelector('.catalog');
+const productCards = Array.from(document.querySelectorAll('.product-card'));
+
+// Находим существующие фильтры по их порядку (0 - размер, 1 - цвет)
+const selects = document.querySelectorAll('.sidebar select');
+const sizeSelect = selects[0]; 
+const colorSelect = selects[1];
+
+// Так как в HTML нет селекта для сортировки, JS создаст его сам и вставит перед кнопкой
+const sortDiv = document.createElement('div');
+sortDiv.className = 'filter-group';
+sortDiv.innerHTML = `
+    <label>Сортировка:</label>
+    <select id="sort-price">
+        <option value="default">По умолчанию</option>
+        <option value="asc">Сначала дешевле</option>
+        <option value="desc">Сначала дороже</option>
+    </select>
+`;
+sidebar.insertBefore(sortDiv, applyBtn);
+const sortSelect = sortDiv.querySelector('select');
+
+// Так как в оригинальном HTML нет размеров в коде, зададим их программно для 3-х товаров
+const sizes = ['s', 'l', 'm']; // Размеры для 1, 2 и 3 товара
+const colors = ['black', 'white', 'black']; // Цвета для 1, 2 и 3 товара
+
+// Действие при нажатии на кнопку "Применить"
+applyBtn.addEventListener('click', function() {
+    const selectedSize = sizeSelect.value;
+    const selectedColor = colorSelect.value;
+    const sortBy = sortSelect.value;
+
+    let visibleCards = [];
+
+    // Перебираем все карточки
+    productCards.forEach((card, index) => {
+        // ДОСТАЕМ ЦЕНУ: берем текст "1 500 ₽", убираем пробелы и буквы, получаем число 1500
+        const priceText = card.querySelector('.product-price').innerText;
+        const price = parseInt(priceText.replace(/[^0-9]/g, ''));
+        card.dataset.price = price; // Временно сохраняем цену в карточку для сортировки
+
+        const cardSize = sizes[index];
+        const cardColor = colors[index];
+
+        // Проверяем фильтры
+        const matchSize = (selectedSize === 'all' || selectedSize === cardSize);
+        const matchColor = (selectedColor === 'all' || selectedColor === cardColor);
+
+        // Скрываем или показываем
+        if (matchSize && matchColor) {
+            card.style.display = 'flex';
+            visibleCards.push(card);
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    // СОРТИРУЕМ то, что осталось
+    if (sortBy !== 'default') {
+        visibleCards.sort((a, b) => {
+            const priceA = parseInt(a.dataset.price);
+            const priceB = parseInt(b.dataset.price);
+            
+            if (sortBy === 'asc') return priceA - priceB;
+            if (sortBy === 'desc') return priceB - priceA;
+        });
+    }
+
+    // ОБНОВЛЯЕМ КАТАЛОГ
+    catalog.innerHTML = '';
+    // Сначала вставляем отсортированные видимые карточки
+    visibleCards.forEach(card => catalog.appendChild(card));
+    // Затем возвращаем скрытые, чтобы они не удалились насовсем
+    productCards.forEach(card => {
+        if (card.style.display === 'none') {
+            catalog.appendChild(card);
+        }
+    });
+});
     </script>
 </head>
 <body>
